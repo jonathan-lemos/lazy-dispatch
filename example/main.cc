@@ -3,22 +3,24 @@
 #include "is_even.h"
 #include "is_odd.h"
 
-struct f {
-  size_t x;
-  size_t y;
+struct big_struct {
+  size_t x[32];
 };
 
-__attribute__((fastcall)) f g() {
-  return {1, 2};
+big_struct g() {
+  big_struct x;
+  x.x[0] = 69;
+  x.x[31] = 42;
+  return x;
 }
 
 REGISTER_FN(g);
 
 int main() {
-  f x = FN(g)();
+  big_struct x = FN(g)();
 
-  std::cout << "x: " << x.x << std::endl;
-  std::cout << "y: " << x.y << std::endl;
+  std::cout << "x.x[0]: " << x.x[0] << std::endl;
+  std::cout << "x.x[31]: " << x.x[31] << std::endl;
 
   std::cout << "5 is even: " << is_even(5) << std::endl;
   std::cout << "6 is even: " << is_even(6) << std::endl;

@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 #ifndef LAZY_MAX_RET_SIZE
-#define LAZY_MAX_RET_SIZE 256
+#define LAZY_MAX_RET_SIZE 1024
 #endif
 
 namespace __lazy {
@@ -52,11 +52,11 @@ namespace __lazy {
       return ret;
     }
     else {
-      if constexpr(N > 0) {
-        return __fn_result_dynamic<N - 1>(expected_size, f, args...);
+      if constexpr(N < LAZY_MAX_RET_SIZE) {
+        return __fn_result_dynamic<N + 1>(expected_size, f, args...);
       }
       else {
-        throw std::invalid_argument("shit's fucked");
+        throw std::invalid_argument("The return type exceeds " + std::to_string(LAZY_MAX_RET_SIZE) + " bytes. #define LAZY_MAX_RET_SIZE " + std::to_string(expected_size) + " before #include \"lazy.h\" and try again.");
       }
     }
   }
@@ -65,7 +65,7 @@ namespace __lazy {
   dynamic __invoke_fn(const std::string& key, A... args) {
     for (auto pair : ftable()) {
       if (pair.second.find(key) != pair.second.end()) {
-        return __fn_result_dynamic<LAZY_MAX_RET_SIZE>(pair.first, pair.second[key], args...);
+        return __fn_result_dynamic<0>(pair.first, pair.second[key], args...);
       }
     }
     throw std::invalid_argument("No registered function '" + key + "'");
