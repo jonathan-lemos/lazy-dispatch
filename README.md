@@ -2,6 +2,9 @@
 lazy-dispatch defers the lookup of a target function's address until runtime.
 This means that a lazy-dispatched function's address doesn't need to be known at compile-time.
 
+Calling a function now requires `sizeof(return_type) + 1` hashtable lookups and a malloc() call, but is that really such a high price to pay for getting rid of that circular dependency?
+
+
 ## Setting up clangd Intellisense
 ```shell
 bazel run @hedron_compile_commands//:refresh_all
@@ -40,3 +43,6 @@ int main(void) {
     std::cout << FN(add)(3, 4) << std::endl;
 }
 ```
+Neither the arguments nor the return type are checked by the compiler, so don't mess up.
+
+For a complete example, look in [example/](example/)
